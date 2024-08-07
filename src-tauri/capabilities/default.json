@@ -1,0 +1,38 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "enables the default permissions",
+  "windows": ["main", "task_*"],
+  "permissions": [
+    "core:path:default",
+    "core:event:default",
+    "core:window:default",
+    "core:window:allow-set-title",
+    "core:window:allow-show",
+    "core:window:allow-close",
+    "core:webview:default",
+    "core:webview:allow-create-webview-window",
+    "core:app:default",
+    "core:resources:default",
+    "core:image:default",
+    "core:menu:default",
+    "core:tray:default",
+    "os:default",
+    "clipboard-manager:default",
+    "clipboard-manager:allow-read-text",
+    "clipboard-manager:allow-write-text",
+    "clipboard-manager:allow-clear",
+    "dialog:allow-save",
+    "dialog:allow-open",
+    "dialog:allow-message",
+    "dialog:allow-confirm",
+    "fs:allow-write",
+    "fs:allow-write-text-file",
+    "fs:allow-read",
+    "fs:allow-read-text-file",
+    "shell:default",
+    "fs:default",
+    "log:default"
+  ]
+}
+
