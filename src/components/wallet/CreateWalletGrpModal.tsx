@@ -173,9 +173,7 @@ export default function CreateWalletGrpModal({
                               decimalScale={0}
                               thousandSeparator
                               value={field.value}
-                              onValueChange={(v) =>
-                                field.onChange(v.floatValue)
-                              }
+                              onValueChange={(v) => field.onChange(v.value)}
                             />
                           );
                         }}

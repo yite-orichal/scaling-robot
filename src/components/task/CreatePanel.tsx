@@ -276,7 +276,7 @@ export default function CreateTaskPanel({
                       }
                       isDisabled={task.status === "Running"}
                       value={field.value}
-                      onValueChange={(v) => field.onChange(v.floatValue)}
+                      onValueChange={(v) => field.onChange(v.value)}
                     />
                   );
                 }}
@@ -322,7 +322,7 @@ export default function CreateTaskPanel({
                     thousandSeparator
                     isDisabled={task.status === "Running"}
                     value={field.value}
-                    onValueChange={(v) => field.onChange(v.floatValue)}
+                    onValueChange={(v) => field.onChange(v.value)}
                   />
                 );
               }}
@@ -346,7 +346,7 @@ export default function CreateTaskPanel({
                     thousandSeparator
                     isDisabled={task.status === "Running"}
                     value={field.value}
-                    onValueChange={(v) => field.onChange(v.floatValue)}
+                    onValueChange={(v) => field.onChange(v.value)}
                   />
                 );
               }}

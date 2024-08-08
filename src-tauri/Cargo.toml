@@ -15,7 +15,7 @@ name = "app_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "2.0.0-rc.0", features = [] }
+tauri-build = { version = "2.0.0-rc.1", features = [] }
 
 [dependencies]
 anyhow = "1.0"
@@ -52,7 +52,7 @@ solana-program = "2.0.3"
 spl-token = { version = "6.0", features = ["no-entrypoint"] }
 spl-associated-token-account = { version = "4.0", features = ["no-entrypoint"] }
 mpl-token-metadata = "4.1"
-tauri = { version = "2.0.0-rc.0", features = ["rustls-tls", "tray-icon"] }
+tauri = { version = "2.0.0-rc.1", features = ["rustls-tls", "tray-icon"] }
 tauri-plugin-clipboard-manager = "2.1.0-beta.7"
 tauri-plugin-dialog = "2.0.0-rc.0"
 tauri-plugin-fs = "2.0.0-rc.0"

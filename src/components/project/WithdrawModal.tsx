@@ -131,7 +131,7 @@ export default function MainWalletWithdrawModal({
                               </div>
                             }
                             value={field.value}
-                            onValueChange={(v) => field.onChange(v.floatValue)}
+                            onValueChange={(v) => field.onChange(v.value)}
                           />
                         );
                       }}

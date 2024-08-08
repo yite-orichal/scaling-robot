@@ -131,7 +131,7 @@ export default function AirdropModal({
                               </span>
                             }
                             value={field.value}
-                            onValueChange={(v) => field.onChange(v.floatValue)}
+                            onValueChange={(v) => field.onChange(v.value)}
                           />
                         );
                       }}
