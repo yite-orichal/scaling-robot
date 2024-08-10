@@ -13,6 +13,7 @@ import { useProject } from "../project/Provider";
 import AirdropModal from "./AirdropModal";
 import BatchWithDrawModal from "./BatchWithdrawModal";
 import toast from "react-hot-toast";
+import { sleep } from "@/app/utils";
 
 export default function WalletGroupPanel({
   walletGrp,
@@ -75,6 +76,7 @@ export default function WalletGroupPanel({
             }
             return newResult;
           });
+          await sleep(200);
         }
       } catch {
         // catched by cmd
