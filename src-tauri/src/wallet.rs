@@ -1,5 +1,6 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, str::FromStr};
 
+use alloy::signers::local::PrivateKeySigner;
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -37,8 +38,16 @@ impl WalletGrp {
     pub fn create_from_import_req(req: ImportWalletGrpReq, chain: Chain) -> Result<Self, AppError> {
         let mut pks = HashSet::new();
         for pk in req.pks {
-            let keypair = utils::parse_sol_bs58_pk(&pk)?;
-            pks.insert(keypair.to_bytes().to_vec());
+            match chain {
+                Chain::Solana => {
+                    let keypair = utils::parse_sol_bs58_pk(&pk)?;
+                    pks.insert(keypair.to_bytes().to_vec());
+                }
+                Chain::Base => {
+                    let key = PrivateKeySigner::from_str(&pk)?;
+                    pks.insert(key.to_bytes().to_vec());
+                }
+            }
         }
 
         Ok(Self {

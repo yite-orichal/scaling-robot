@@ -76,3 +76,25 @@ export function useExportWalletGrpCmd() {
     exportWalletGrpError,
   };
 }
+
+export type WalletGrpWithdrawReq = {
+  chain: Chain;
+  from_pk: string;
+  addr: string;
+};
+
+export function useWalletWithdrawCmd() {
+  const {
+    invokeFn: withdraw,
+    invoking: withdrawing,
+    result: txId,
+    error: withdrawError,
+  } = useCmd<string, { req: WalletGrpWithdrawReq }>("wallet_grp_withdraw");
+
+  return {
+    withdraw,
+    withdrawing,
+    txId,
+    withdrawError,
+  };
+}

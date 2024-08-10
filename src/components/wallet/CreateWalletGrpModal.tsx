@@ -132,7 +132,10 @@ export default function CreateWalletGrpModal({
                                   await fs.readTextFile(filePath);
                                 const lines = fileLines
                                   .split("\n")
-                                  .map((it) => it.trim().split(",")[1].trim())
+                                  .map((it) => {
+                                    let pk = it.trim().split(",")[1];
+                                    return pk ? pk.trim() : "";
+                                  })
                                   .filter((it) => it.length > 0);
                                 field.onChange(lines);
                               }}

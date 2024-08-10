@@ -1,4 +1,4 @@
-import { WalletGrpResp } from "@/hooks";
+import { useWalletWithdrawCmd, WalletGrpResp } from "@/hooks";
 import {
   Button,
   Link,
@@ -10,11 +10,12 @@ import {
 } from "@nextui-org/react";
 import { useProject } from "../project/Provider";
 import FormItem from "../FormItem";
-import { useTransferNativeCmd } from "@/hooks/chain";
 import { useState } from "react";
 import * as shell from "@tauri-apps/plugin-shell";
 import _ from "lodash";
 import { abbr } from "@/app/utils";
+import TextInput from "../TextInput";
+import { useForm } from "react-hook-form";
 
 export default function BatchWithDrawModal({
   walletGrp,
@@ -31,21 +32,26 @@ export default function BatchWithDrawModal({
     { addr: string; log: string; isError: boolean }[]
   >([]);
   const [isTransfering, setIsTransfering] = useState(false);
-  const { transferNative } = useTransferNativeCmd();
+  const { withdraw } = useWalletWithdrawCmd();
 
-  const transfer = async () => {
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<{ toAddr: string }>();
+
+  const transfer = async (data: { toAddr: string }) => {
     const pkChunks = _.chain(walletGrp.addresses).chunk(20).value();
 
     setIsTransfering(true);
     for (const pkChunk of pkChunks) {
       let promises = pkChunk.map(async ([addr, pk]) => {
         try {
-          let txid = await transferNative({
+          let txid = await withdraw({
             req: {
               chain: walletGrp.chain,
               from_pk: pk,
-              addr: project.main_wallet,
-              amount: "max",
+              addr: data.toAddr,
             },
           });
           setTransferLogs((old) => {
@@ -86,8 +92,19 @@ export default function BatchWithDrawModal({
                       {walletGrp.name} ({walletGrp.addresses.length} addresses)
                     </div>
                   </FormItem>
-                  <FormItem label={<div className={labelClassName}>To</div>}>
-                    <div>{project.main_wallet}</div>
+                  <FormItem
+                    label={<div className={labelClassName}>To</div>}
+                    error={errors.toAddr}
+                  >
+                    <TextInput
+                      defaultValue={project.main_wallet}
+                      {...register("toAddr", {
+                        required: {
+                          value: true,
+                          message: "to addresses is required",
+                        },
+                      })}
+                    />
                   </FormItem>
                   <FormItem label={<div className={labelClassName}>Value</div>}>
                     <div>Maximum</div>
@@ -129,7 +146,7 @@ export default function BatchWithDrawModal({
               <Button
                 isLoading={isTransfering}
                 color="primary"
-                onClick={transfer}
+                onClick={() => handleSubmit(transfer)()}
               >
                 Withdraw
               </Button>

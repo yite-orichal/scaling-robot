@@ -2,6 +2,12 @@ use alloy::sol;
 
 sol!(
     #[sol(rpc)]
+    WEthContract,
+    "abis/weth.json"
+);
+
+sol!(
+    #[sol(rpc)]
     Erc20Contract,
     "abis/erc20.json"
 );

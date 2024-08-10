@@ -14,6 +14,7 @@ pub fn invoke_hanlders() -> impl Fn(Invoke) -> bool + Send + Sync + 'static {
         wallet::create_wallet_grp,
         wallet::import_wallet_grp,
         wallet::export_wallet_grp,
+        wallet::wallet_grp_withdraw,
         chain::airdrop,
         chain::transfer_native,
         chain::get_addr_balance,
