@@ -18,7 +18,7 @@ import * as shell from "@tauri-apps/plugin-shell";
 import { abbr } from "@/app/utils";
 import { BASE_TX_FAKE_BASE_FEE, SOL_TX_BASE_FEE } from "@/consts";
 
-type FormData = { to_addr: string; amount: number };
+type FormData = { to_addr: string; amount: string };
 export default function MainWalletWithdrawModal({
   balance,
   isOpen,
@@ -46,7 +46,7 @@ export default function MainWalletWithdrawModal({
           chain: project.chain,
           from_pk: project.main_wallet_pk,
           addr: data.to_addr,
-          amount: data.amount.toString(),
+          amount: data.amount,
         },
       });
     } catch {
@@ -123,7 +123,7 @@ export default function MainWalletWithdrawModal({
                                         ? SOL_TX_BASE_FEE
                                         : BASE_TX_FAKE_BASE_FEE);
 
-                                    field.onChange(amount);
+                                    field.onChange(amount.toString());
                                   }}
                                 >
                                   Max

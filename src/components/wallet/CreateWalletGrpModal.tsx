@@ -65,7 +65,7 @@ export default function CreateWalletGrpModal({
       });
     } else {
       grp = await createWalletGrp({
-        req: { id, name: data.name, cnt: data.cnt },
+        req: { id, name: data.name, cnt: Number(data.cnt) },
       });
     }
     if (grp) {

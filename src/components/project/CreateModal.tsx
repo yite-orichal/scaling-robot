@@ -9,15 +9,14 @@ import {
   ModalHeader,
   Select,
   SelectItem,
-  Tooltip,
 } from "@nextui-org/react";
 import * as path from "@tauri-apps/api/path";
 import * as dialog from "@tauri-apps/plugin-dialog";
 import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { BsQuestionCircle } from "react-icons/bs";
 import FormItem from "../FormItem";
 import ProxyEditor from "../ProxyEditor";
+import ProxyEditorTooltip from "../ProxyEditorTooltip";
 import TextInput from "../TextInput";
 
 export default function CreateProjectModal({
@@ -182,49 +181,7 @@ export default function CreateProjectModal({
                                 className={`${labelClassName} flex gap-1 items-center justify-end`}
                               >
                                 <div>Proxy</div>
-                                <Tooltip
-                                  color="secondary"
-                                  showArrow
-                                  content={
-                                    <div className="flex flex-col gap-1">
-                                      <div>
-                                        Please select a plain text file split by
-                                        line
-                                      </div>
-                                      <div>
-                                        Line format:{" "}
-                                        <span className="bg-gray-300 text-black px-1 py-0.5 rounded">
-                                          protocol://username:password@host:port
-                                        </span>
-                                      </div>
-                                      <div>Examples: </div>
-                                      <div>
-                                        <span className="bg-gray-300 text-black px-1 py-0.5 rounded">
-                                          http://bob:secret@bob_proxy.com:1920
-                                        </span>
-                                      </div>
-                                      <div>
-                                        <span className="bg-gray-300 text-black px-1 py-0.5 rounded">
-                                          https://no_auth_needed_proxy.com
-                                        </span>
-                                      </div>
-                                      <div>
-                                        <span className="bg-gray-300 text-black px-1 py-0.5 rounded">
-                                          socks5://alice:alice_secret@alice_proxy.com:1089
-                                        </span>
-                                      </div>
-                                      <div>
-                                        <span className="bg-gray-300 text-black px-1 py-0.5 rounded">
-                                          socks5://127.0.0.1:1089
-                                        </span>
-                                      </div>
-                                    </div>
-                                  }
-                                >
-                                  <div>
-                                    <BsQuestionCircle />
-                                  </div>
-                                </Tooltip>
+                                <ProxyEditorTooltip />
                               </div>
                             }
                             error={errors.proxy_urls}

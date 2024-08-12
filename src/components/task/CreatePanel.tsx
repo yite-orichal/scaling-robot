@@ -81,6 +81,8 @@ export default function CreateTaskPanel({
       walletGrp.chain === "Solana"
         ? Math.round(data.gas_price * 1_000_000)
         : Math.round(data.gas_price * 1e9);
+    data.workers_cnt = Number(data.workers_cnt);
+    data.interval_secs = Number(data.interval_secs);
 
     const label = `task_${walletGrp.id}`;
     const searchParams = new URLSearchParams();

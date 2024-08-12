@@ -19,7 +19,7 @@ import { NumericFormat } from "react-number-format";
 import FormItem from "../FormItem";
 import { useProject } from "../project/Provider";
 
-type FormData = { per_amount: number };
+type FormData = { per_amount: string };
 
 export default function AirdropModal({
   walletGrp,
@@ -37,7 +37,7 @@ export default function AirdropModal({
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
-    defaultValues: { per_amount: 0.02 },
+    defaultValues: { per_amount: "0.02" },
   });
 
   const { airdrop } = useAirdropCmd();
@@ -60,7 +60,7 @@ export default function AirdropModal({
             chain: project.chain,
             from_pk: project.main_wallet_pk,
             addrs,
-            per_amount: data.per_amount,
+            per_amount: Number(data.per_amount),
           },
         });
         setDepositLogs((old) => [...old, { isError: false, msg: txId }]);

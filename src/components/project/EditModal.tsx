@@ -15,6 +15,7 @@ import FormItem from "../FormItem";
 import ProxyEditor from "../ProxyEditor";
 import TextInput from "../TextInput";
 import { useProject } from "./Provider";
+import ProxyEditorTooltip from "../ProxyEditorTooltip";
 
 export default function EditProjectModal({
   isOpen,
@@ -157,7 +158,14 @@ export default function EditProjectModal({
                     render={({ field }) => {
                       return (
                         <FormItem
-                          label={<div className={labelClassName}>Proxy</div>}
+                          label={
+                            <div
+                              className={`${labelClassName} flex gap-1 items-center justify-end`}
+                            >
+                              <div>Proxy</div>
+                              <ProxyEditorTooltip />
+                            </div>
+                          }
                           error={errors.proxy_urls}
                         >
                           <ProxyEditor
