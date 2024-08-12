@@ -102,6 +102,27 @@ pub async fn create_wallet_grp(
     Ok(resp)
 }
 
+#[command(async, rename_all = "snake_case")]
+pub async fn del_wallet_grp(
+    grp_id: String,
+    state: State<'_, ProjectState>,
+) -> Result<(), AppError> {
+    let mut guard = state.lock().await;
+    if let Some(s) = guard.as_mut() {
+        let grp_idx = s.project.wallet_grps.iter().position(|it| it.id == grp_id);
+        if grp_idx.is_none() {
+            return Err(AppError::new("Can't find wallet group"));
+        }
+        let grp_idx = grp_idx.unwrap();
+
+        s.project.wallet_grps.remove(grp_idx);
+        s.project.save(s.path.clone()).await?;
+    }
+    drop(guard);
+
+    Ok(())
+}
+
 #[command(async)]
 pub async fn import_wallet_grp(
     req: ImportWalletGrpReq,

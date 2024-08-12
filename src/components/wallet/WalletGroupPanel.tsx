@@ -1,11 +1,15 @@
-import { useExportWalletGrpCmd, WalletGrpResp } from "@/hooks";
+import {
+  useDeleteWalletGrpCmd,
+  useExportWalletGrpCmd,
+  WalletGrpResp,
+} from "@/hooks";
 import { AddrBalanceResp, useGetAddrBalanceCmd } from "@/hooks/chain";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import * as path from "@tauri-apps/api/path";
 import * as dialog from "@tauri-apps/plugin-dialog";
 import _ from "lodash";
 import { useCallback, useEffect, useState } from "react";
-import { AiOutlineExport } from "react-icons/ai";
+import { AiOutlineDelete, AiOutlineExport } from "react-icons/ai";
 import { MdOutlineMerge, MdRefresh } from "react-icons/md";
 import { TbArrowFork } from "react-icons/tb";
 import IconButton from "../IconButton";
@@ -16,9 +20,13 @@ import toast from "react-hot-toast";
 import { sleep } from "@/app/utils";
 
 export default function WalletGroupPanel({
+  isRunning = false,
   walletGrp,
+  onWalletGroupDeleted,
 }: {
+  isRunning: boolean;
   walletGrp: WalletGrpResp;
+  onWalletGroupDeleted: (id: string) => void;
 }) {
   const [isAirdropModalOpen, setIsAirdropModalOpen] = useState(false);
   const [isBatchWithdrawModalOpen, setIsBatchWithdrawModalOpen] =
@@ -31,6 +39,7 @@ export default function WalletGroupPanel({
 
   const { project, nativeCoinSymbol, refreshMainWalletBalance } = useProject();
   const { exportWalletGrp } = useExportWalletGrpCmd();
+  const { delWalletGrp } = useDeleteWalletGrpCmd();
 
   const onExportWalletGrp = async () => {
     let docPath = await path.documentDir();
@@ -88,6 +97,24 @@ export default function WalletGroupPanel({
     [walletGrp],
   );
 
+  const onDelWalletGrp = async () => {
+    let isOk = await dialog.confirm("are you sure?", {
+      kind: "warning",
+      title: "Confirm Delete Wallet Group",
+    });
+    if (!isOk) {
+      return;
+    }
+
+    try {
+      await delWalletGrp({ grp_id: walletGrp.id });
+      onWalletGroupDeleted(walletGrp.id);
+    } catch (err) {
+      const e = err as { err_msg: string };
+      toast.error(`delete wallet group error: ${e.err_msg}`);
+    }
+  };
+
   useEffect(() => {
     refreshBalances();
   }, [refreshBalances]);
@@ -104,6 +131,17 @@ export default function WalletGroupPanel({
               {walletGrp.name} ({walletGrp.addresses.length} items)
             </div>
             <div className="flex-1 flex items-center justify-end gap-3">
+              <IconButton
+                tooltip={
+                  isRunning
+                    ? "Stop running task to delete wallet group"
+                    : "Delete Wallet Group"
+                }
+                Icon={AiOutlineDelete}
+                isDanger
+                isDisabled={isRunning}
+                onClick={onDelWalletGrp}
+              />
               <IconButton
                 tooltip={"Export Wallet Group"}
                 Icon={AiOutlineExport}

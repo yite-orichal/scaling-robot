@@ -167,7 +167,17 @@ function ProjectUI({
       <div className="flex flex-1 gap-3 min-h-full max-h-full">
         <div className="flex-1 flex flex-col gap-1 min-h-full max-h-full">
           {selectedWalletGrp && (
-            <WalletGroupPanel walletGrp={selectedWalletGrp} />
+            <WalletGroupPanel
+              walletGrp={selectedWalletGrp}
+              isRunning={tasks[selectedWalletGrp.id]?.status === "Running"}
+              onWalletGroupDeleted={(id) => {
+                setSelectedWalletGrpKey(project.wallet_grps[0]?.id);
+                setProject((old) => {
+                  const newGrps = old.wallet_grps.filter((it) => it.id !== id);
+                  return { ...old, wallet_grps: newGrps } as ProjectResp;
+                });
+              }}
+            />
           )}
         </div>
         <div className="flex-1 flex flex-col gap-2 min-h-full max-h-full">

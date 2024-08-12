@@ -98,3 +98,17 @@ export function useWalletWithdrawCmd() {
     withdrawError,
   };
 }
+
+export function useDeleteWalletGrpCmd() {
+  const {
+    invokeFn: delWalletGrp,
+    invoking: deleteing,
+    error: deleteError,
+  } = useCmd<null, { grp_id: string }>("del_wallet_grp");
+
+  return {
+    delWalletGrp,
+    deleteing,
+    deleteError,
+  };
+}

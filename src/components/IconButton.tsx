@@ -4,6 +4,7 @@ import { IconType } from "react-icons";
 
 export default function IconButton({
   isDisabled = false,
+  isDanger = false,
   tooltip,
   Icon,
   iconClassName = "",
@@ -11,6 +12,7 @@ export default function IconButton({
   onClick,
 }: {
   isDisabled?: boolean;
+  isDanger?: boolean;
   tooltip: ReactNode;
   Icon: IconType;
   iconClassName?: string;
@@ -21,7 +23,7 @@ export default function IconButton({
     variants: {
       disabled: {
         true: "text-gray-400",
-        false: "text-sky-300",
+        false: isDanger ? "text-danger" : "text-sky-300",
       },
     },
   });
