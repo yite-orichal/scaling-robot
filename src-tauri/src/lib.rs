@@ -59,7 +59,7 @@ pub fn run() {
                         .info(Color::Green)
                         .debug(Color::BrightBlue),
                 )
-                .level(APPLIB_LOGLEVEL)
+                .level(LevelFilter::Error)
                 .level_for("app_lib", APPLIB_LOGLEVEL)
                 .build(),
         )

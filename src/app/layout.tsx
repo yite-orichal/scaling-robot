@@ -18,8 +18,17 @@ export default function RootLayout({
     }
 
     document.addEventListener("contextmenu", (e) => {
-      e.preventDefault();
-      return false;
+      const targetElement = e.target as Element;
+      const targetIsInput = targetElement.tagName.toLowerCase() === "input";
+
+      const hasSelection = window.getSelection
+        ? window.getSelection()?.toString()
+        : "";
+
+      if (!targetIsInput && !hasSelection) {
+        e.preventDefault();
+        return false;
+      }
     });
   }, []);
   return (
