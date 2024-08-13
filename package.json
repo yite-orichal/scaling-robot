@@ -1,6 +1,6 @@
 {
   "name": "moo-tools",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -17,7 +17,9 @@
     "@tauri-apps/plugin-fs": "2.0.0-rc.0",
     "@tauri-apps/plugin-log": "2.0.0-rc.0",
     "@tauri-apps/plugin-os": "2.0.0-rc.0",
+    "@tauri-apps/plugin-process": "^2.0.0-rc.0",
     "@tauri-apps/plugin-shell": "2.0.0-rc.0",
+    "@tauri-apps/plugin-updater": "^2.0.0-rc.0",
     "@types/lodash": "^4.17.6",
     "dayjs": "^1.11.11",
     "framer-motion": "^11.2.12",

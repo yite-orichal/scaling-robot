@@ -49,6 +49,8 @@ pub fn run() {
         .unwrap();
 
     let app = tauri::Builder::default()
+        .plugin(tauri_plugin_process::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(
             tauri_plugin_log::Builder::new()
                 .targets([Target::new(TargetKind::Stdout)])
@@ -57,7 +59,7 @@ pub fn run() {
                         .info(Color::Green)
                         .debug(Color::BrightBlue),
                 )
-                .level(LevelFilter::Error)
+                .level(APPLIB_LOGLEVEL)
                 .level_for("app_lib", APPLIB_LOGLEVEL)
                 .build(),
         )
@@ -197,7 +199,7 @@ fn setup_app(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
         .title("Moo Tools")
         .inner_size(1280.0, 900.0)
         .min_inner_size(1280.0, 900.0)
-        .visible(false)
+        .visible(true)
         .focused(false)
         .build()?;
 

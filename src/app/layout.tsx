@@ -5,6 +5,8 @@ import { Providers } from "@/components/Providers";
 import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 
+import Updater from "@/components/Updater";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -24,9 +26,10 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body>
         <Toaster
-          position="top-right"
+          position="bottom-right"
           toastOptions={{
             style: {
+              zIndex: 999,
               background: "#333",
               color: "#FFF",
               maxWidth: "80%",
@@ -36,6 +39,7 @@ export default function RootLayout({
             },
           }}
         />
+        <Updater className="fixed z-50 top-2 right-2 rounded p-2 bg-secondary" />
         <Providers>{children}</Providers>
       </body>
     </html>

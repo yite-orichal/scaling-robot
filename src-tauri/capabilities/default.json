@@ -26,13 +26,16 @@
     "dialog:allow-open",
     "dialog:allow-message",
     "dialog:allow-confirm",
+    "dialog:allow-ask",
     "fs:allow-write",
     "fs:allow-write-text-file",
     "fs:allow-read",
     "fs:allow-read-text-file",
     "shell:default",
     "fs:default",
-    "log:default"
+    "log:default",
+    "updater:default",
+    "process:default"
   ]
 }
 

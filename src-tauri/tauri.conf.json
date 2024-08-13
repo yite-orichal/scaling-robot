@@ -1,6 +1,6 @@
 {
   "productName": "MooTools",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "identifier": "com.moo.tools",
   "build": {
     "frontendDist": "../dist",
@@ -16,6 +16,7 @@
   },
   "bundle": {
     "active": true,
+    "createUpdaterArtifacts": true,
     "targets": "all",
     "icon": [
       "icons/32x32.png",
@@ -24,6 +25,12 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEIyRkYzNjVBQzVGOUEyNUQKUldSZG92bkZXamIvc3JwOVV4RlFRTE9veXZrb25DQldsS2N4bkVmN1NJWnA1aEFrbm9lcktYaG4K",
+      "endpoints": ["https://utxodex.com/mt/latest.json"]
+    }
   },
   "$schema": "../node_modules/@tauri-apps/cli/schema.json"
 }
