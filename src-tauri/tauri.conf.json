@@ -1,6 +1,6 @@
 {
   "productName": "MooTools",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "identifier": "com.moo.tools",
   "build": {
     "frontendDist": "../dist",
