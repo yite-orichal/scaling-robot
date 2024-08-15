@@ -50,6 +50,8 @@ pub struct Task {
     pub trade_mode: TradeMode,
     pub percetage: (u32, u32),
     pub slippage: u16,
+    pub use_jito: bool,
+    pub jito_url: Option<String>,
     pub gas_price: u32,
     pub interval_secs: u64,
     pub wallet_states: HashMap<PrivateKey, bool>,
@@ -82,6 +84,8 @@ impl Task {
             trade_mode: req.trade_mode,
             percetage: req.percetage,
             slippage: req.slippage,
+            use_jito: req.use_jito,
+            jito_url: project.jito_url.clone(),
             gas_price: req.gas_price,
             interval_secs: req.interval_secs,
         })
@@ -106,6 +110,8 @@ impl Task {
                     percetage: self.percetage,
                     slippage: self.slippage,
                     gas_price: self.gas_price,
+                    use_jito: self.use_jito,
+                    jito_url: self.jito_url.clone(),
                 }
             })
             .collect()

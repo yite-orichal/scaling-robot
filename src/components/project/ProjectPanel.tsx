@@ -112,7 +112,18 @@ export default function ProjectPanel({
                 }}
               />
             </div>
-            <div className="col-span-2">Agg Api Url: {project.agg_api_url}</div>
+            <div className="col-span-2">
+              {project.chain === "Solana" ? "Jupter Api Url" : "1Inch Api Url"}:{" "}
+              {project.agg_api_url}
+            </div>
+            {project.chain === "Solana" && (
+              <>
+                <div className="col-span-1"></div>
+                <div className="col-span-2">
+                  Jito Api Url: {project.jito_url}
+                </div>
+              </>
+            )}
           </div>
         </CardBody>
       </Card>

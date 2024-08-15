@@ -10,6 +10,7 @@ export type CreateTaskReq = {
   trade_mode: TradeMode;
   percetage: [number, number];
   slippage: number;
+  use_jito: boolean;
   gas_price: number;
   interval_secs: number;
 };

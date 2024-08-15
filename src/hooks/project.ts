@@ -7,6 +7,7 @@ export type CreateProjectReq = {
   name: string;
   chain: Chain;
   rpc: string;
+  jito_url?: string;
   agg_api_url: string;
   agg_api_key?: string;
   proxy_urls: string[];
@@ -41,6 +42,7 @@ export type ProjectResp = {
   main_wallet: string;
   main_wallet_pk: string;
   rpc: string;
+  jito_url?: string;
   agg_api_url: string;
   agg_api_key?: string;
   proxy_urls: string[];
@@ -51,6 +53,7 @@ export type UpdateProjectReq = {
   main_wallet_pk: string;
   proxy_urls: string[];
   rpc_url: string;
+  jito_url?: string;
   agg_api_url: string;
   agg_api_key?: string;
 };

@@ -15,6 +15,7 @@ use alloy::{
 };
 use log::{debug, warn};
 use rand::{thread_rng, Rng};
+use solana_client::rpc_client::SerializableTransaction;
 use solana_sdk::{
     compute_budget::ComputeBudgetInstruction,
     message::{v0::Message, VersionedMessage},
@@ -23,6 +24,7 @@ use solana_sdk::{
     pubkey::Pubkey,
     signature::Keypair,
     signer::Signer,
+    system_instruction,
     transaction::VersionedTransaction,
 };
 use tauri::{AppHandle, Manager};
@@ -32,6 +34,7 @@ use crate::{
     consts::{BASE_ONE_INCH_V6_ROUTER_ADDR, ONE_INCH_ETH_ADDR, WSOL_MINT},
     contracts::Erc20Contract,
     error::AppError,
+    jito::JitoRpcClient,
     jup::{self, quote::QuoteRequest, swap::SwapRequest, transaction_config::TransactionConfig},
     one_inch::{self, SwapQueryParams},
     state::{AppHandleStateExt, TradeTaskState},
@@ -57,6 +60,8 @@ pub struct Worker {
     pub trade_mode: TradeMode,
     pub percetage: (u32, u32),
     pub slippage: u16,
+    pub use_jito: bool,
+    pub jito_url: Option<String>,
     pub gas_price: u32,
 }
 
@@ -258,36 +263,64 @@ impl Worker {
             .get_address_lookup_tables(&swap_ixs_resp.address_lookup_table_addresses)
             .await?;
 
+        let unit_price = if self.use_jito {
+            0u64
+        } else {
+            self.gas_price as u64
+        };
         let compute_units_ixs = vec![
             ComputeBudgetInstruction::set_compute_unit_limit(600_000),
-            ComputeBudgetInstruction::set_compute_unit_price(self.gas_price as u64),
+            ComputeBudgetInstruction::set_compute_unit_price(unit_price),
         ];
 
-        let tx_ixs = [compute_units_ixs, setup_ixs, vec![swap_ix], cleanup_ix].concat();
+        let mut tx_ixs = [compute_units_ixs, setup_ixs, vec![swap_ix], cleanup_ix].concat();
+
+        if self.use_jito {
+            tx_ixs.push(system_instruction::transfer(
+                &wallet_pubkey,
+                &JitoRpcClient::get_tip_account(),
+                self.gas_price as u64,
+            ));
+        }
 
         let recent_blockhash = rpc_client.get_latest_blockhash().await?;
         let tx_msg =
             Message::try_compile(&wallet_pubkey, &tx_ixs, &addr_loopup_tb, recent_blockhash)?;
         let tx_msg = VersionedMessage::V0(tx_msg);
         let tx = VersionedTransaction::try_new(tx_msg, &[&wallet_keypair])?;
+        let txid = tx.get_signature();
+        self.send_worker_msg_to_win(msg_kind, format!("created transaction {txid}"));
 
-        let txid = rpc_client.send_transaction(&tx).await?;
+        if self.use_jito {
+            if self.jito_url.is_none() {
+                return Err(AppError::new("jito api url not provide"));
+            }
+            let jito_url = self.jito_url.clone().unwrap();
+            let jito_client = JitoRpcClient {
+                http_client: proxied_http_client.clone(),
+                base_url: jito_url,
+            };
+            let tx_bytes = bincode::serialize(&tx)?;
+            let base58_tx = bs58::encode(tx_bytes).into_string();
+            jito_client.send_bundle(&[base58_tx]).await?;
+        } else {
+            rpc_client.send_transaction(&tx).await?;
+        }
 
-        let evt_msg = format!("transaction {txid} has been send, confirming now ...");
+        let evt_msg = "transaction has been send, confirming now ...";
         self.send_worker_msg_to_win(msg_kind, evt_msg);
 
         let start_time = Instant::now();
         loop {
             tokio::time::sleep(Duration::from_secs(2)).await;
             let results: Vec<_> = rpc_client
-                .get_signature_statuses_with_history(&[txid])
+                .get_signature_statuses_with_history(&[*txid])
                 .await?
                 .value;
             let result = results[0].clone();
             if result.is_none() {
                 if start_time.elapsed().as_secs() > 120 {
-                    let evt_msg =
-                        format!("transaction {txid} was dropped, please increase priority fee");
+                    let evt_msg = "transaction was dropped, please increase priority fee ...";
                     self.send_worker_msg_to_win(msg_kind, evt_msg);
                     break;
                 } else {
@@ -299,12 +332,11 @@ impl Worker {
                 let status = result.unwrap();
                 match status.err {
                     Some(err) => {
-                        let evt_msg =
-                            format!("transaction {txid} landed but failed, error is: {err}");
+                        let evt_msg = format!("transaction landed but failed, error is: {err}");
                         self.send_worker_msg_to_win(msg_kind, evt_msg);
                     }
                     None => {
-                        let evt_msg = format!("transaction {txid} landed and successed !!!");
+                        let evt_msg = "transaction landed and successed !!!";
                         self.send_worker_msg_to_win(msg_kind, evt_msg);
                     }
                 }

@@ -8,6 +8,7 @@ import {
   Radio,
   RadioGroup,
   Slider,
+  Switch,
   Tooltip,
 } from "@nextui-org/react";
 import * as webview from "@tauri-apps/api/webviewWindow";
@@ -41,28 +42,40 @@ export default function CreateTaskPanel({
   const { project } = useProject();
   const labelClassName = "w-32 text-right";
 
-  const [gasPriceLabel, gasPriceUnit] = useMemo(() => {
-    if (walletGrp.chain === "Solana") {
-      return ["CU Price", "Lamports"];
-    }
-
-    return ["Gas Price", "Gwei"];
-  }, [walletGrp.chain]);
-
   const {
+    register,
     handleSubmit,
     control,
+    watch,
+    setValue,
     formState: { errors, isValid },
   } = useForm<CreateTaskReq>({
     defaultValues: {
       percetage: [0.15, 0.3],
       slippage: 0.02,
       trade_mode: "Both",
+      use_jito: false,
       gas_price: walletGrp.chain === "Solana" ? 0.01 : 0.02,
       interval_secs: 1,
       workers_cnt: 2,
     },
   });
+
+  const isUseJito = watch("use_jito");
+
+  const [gasPriceLabel, gasPriceUnit] = useMemo(() => {
+    if (walletGrp.chain === "Solana") {
+      if (isUseJito) {
+        setValue("gas_price", 0.000005);
+        return ["Jito Tip", "SOL"];
+      }
+
+      setValue("gas_price", 0.1);
+      return ["CU Price", "Lamports"];
+    }
+
+    return ["Gas Price", "Gwei"];
+  }, [walletGrp.chain, isUseJito, setValue]);
 
   const { createTradeTask, creating, createTradeTaskErr } =
     useCreateTradeTaskCmd();
@@ -79,7 +92,11 @@ export default function CreateTaskPanel({
         : Math.round(data.slippage * 100);
     data.gas_price =
       walletGrp.chain === "Solana"
-        ? Math.round(data.gas_price * 1_000_000)
+        ? data.use_jito
+          ? // SOL
+            Math.round(data.gas_price * 1e9)
+          : // to micro lamports
+            Math.round(data.gas_price * 1e6)
         : Math.round(data.gas_price * 1e9);
     data.workers_cnt = Number(data.workers_cnt);
     data.interval_secs = Number(data.interval_secs);
@@ -260,30 +277,37 @@ export default function CreateTaskPanel({
             />
           </FormItem>
           {walletGrp.chain === "Solana" && (
-            <FormItem
-              label={<div className={labelClassName}>{gasPriceLabel}</div>}
-            >
-              <Controller
-                name="gas_price"
-                control={control}
-                render={({ field }) => {
-                  return (
-                    <NumericFormat
-                      aria-label="Gas Price"
-                      customInput={Input}
-                      decimalScale={6}
-                      thousandSeparator
-                      endContent={
-                        <span className="text-default-400">{gasPriceUnit}</span>
-                      }
-                      isDisabled={task.status === "Running"}
-                      value={field.value}
-                      onValueChange={(v) => field.onChange(v.value)}
-                    />
-                  );
-                }}
-              />
-            </FormItem>
+            <>
+              <FormItem label={<div className={labelClassName}>Use Jito</div>}>
+                <Switch aria-label="Use Jito" {...register("use_jito")} />
+              </FormItem>
+              <FormItem
+                label={<div className={labelClassName}>{gasPriceLabel}</div>}
+              >
+                <Controller
+                  name="gas_price"
+                  control={control}
+                  render={({ field }) => {
+                    return (
+                      <NumericFormat
+                        aria-label="Gas Price"
+                        customInput={Input}
+                        decimalScale={6}
+                        thousandSeparator
+                        endContent={
+                          <span className="text-default-400">
+                            {gasPriceUnit}
+                          </span>
+                        }
+                        isDisabled={task.status === "Running"}
+                        value={field.value}
+                        onValueChange={(v) => field.onChange(v.value)}
+                      />
+                    );
+                  }}
+                />
+              </FormItem>
+            </>
           )}
           <FormItem
             label={

@@ -1,4 +1,4 @@
-import { VALID_URL_PATTERN } from "@/consts";
+import { JITO_BLOCK_ENGINE_URLS, VALID_URL_PATTERN } from "@/consts";
 import { CreateProjectReq, useCreateProjectCmd } from "@/hooks";
 import {
   Button,
@@ -35,10 +35,14 @@ export default function CreateProjectModal({
     handleSubmit,
     formState: { errors },
   } = useForm<CreateProjectReq>({
-    defaultValues: { chain: "Solana", proxy_urls: [] },
+    defaultValues: {
+      chain: "Solana",
+      jito_url: "https://tokyo.mainnet.block-engine.jito.wtf",
+      proxy_urls: [],
+    },
   });
 
-  const labelClassName = "w-32 text-right";
+  const labelClassName = "w-36 text-right";
   const { createProject, creating, createProjectErr } = useCreateProjectCmd();
 
   async function onSubmitForm(data: CreateProjectReq) {
@@ -54,6 +58,7 @@ export default function CreateProjectModal({
     data.id = window.crypto.randomUUID();
     data.save_path = savePath;
 
+    console.log(data);
     await createProject({ req: data });
     onSaved(data.save_path);
   }
@@ -127,6 +132,21 @@ export default function CreateProjectModal({
                       })}
                     />
                   </FormItem>
+                  {selectedChain === "Solana" && (
+                    <FormItem
+                      label={<div className={labelClassName}>Jito Api Url</div>}
+                      error={errors.jito_url}
+                    >
+                      <Select
+                        aria-label="Jito Api Url"
+                        {...register("jito_url")}
+                      >
+                        {JITO_BLOCK_ENGINE_URLS.map((item) => (
+                          <SelectItem key={item.value}>{item.name}</SelectItem>
+                        ))}
+                      </Select>
+                    </FormItem>
+                  )}
                   <FormItem
                     label={
                       <div className={labelClassName}>{aggApiUrlLabel}</div>

@@ -30,6 +30,7 @@ pub struct CreateProjectReq {
     pub name: String,
     pub chain: Chain,
     pub rpc: String,
+    pub jito_url: Option<String>,
     pub agg_api_url: String,
     pub agg_api_key: Option<String>,
     pub proxy_urls: Vec<String>,
@@ -44,6 +45,7 @@ pub struct ProjectResp {
     pub main_wallet: String,
     pub main_wallet_pk: String,
     pub rpc: String,
+    pub jito_url: Option<String>,
     pub agg_api_url: String,
     pub agg_api_key: Option<String>,
     pub proxy_urls: Vec<String>,
@@ -69,6 +71,7 @@ impl TryFrom<&Project> for ProjectResp {
             main_wallet,
             main_wallet_pk,
             rpc: value.rpc.clone(),
+            jito_url: value.jito_url.clone(),
             agg_api_url: value.agg_api_url.clone(),
             agg_api_key: value.agg_api_key.clone(),
             proxy_urls: value.proxy_urls.clone(),
@@ -82,6 +85,7 @@ pub struct UpdateProjectReq {
     pub main_wallet_pk: String,
     pub proxy_urls: Vec<String>,
     pub rpc_url: String,
+    pub jito_url: Option<String>,
     pub agg_api_url: String,
 }
 
@@ -240,6 +244,7 @@ pub async fn update_project(
         proj.project.main_wallet = main_wallet;
 
         proj.project.rpc = req.rpc_url;
+        proj.project.jito_url = req.jito_url;
         proj.project.agg_api_url = req.agg_api_url;
         proj.project.proxy_urls = req.proxy_urls;
 

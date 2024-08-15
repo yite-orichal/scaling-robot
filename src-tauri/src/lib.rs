@@ -23,6 +23,7 @@ mod commands;
 mod consts;
 mod contracts;
 mod error;
+mod jito;
 #[allow(unused)]
 mod jup;
 mod one_inch;
@@ -197,8 +198,8 @@ fn setup_app(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
 
     let main_window = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
         .title("Moo Tools")
-        .inner_size(1280.0, 900.0)
-        .min_inner_size(1280.0, 900.0)
+        .inner_size(1380.0, 960.0)
+        .min_inner_size(1380.0, 960.0)
         .visible(true)
         .focused(false)
         .build()?;
@@ -214,7 +215,7 @@ fn setup_app(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
         let scale_factor = monitor.scale_factor();
         let monitor_pos = monitor.position().to_logical::<i32>(scale_factor);
         let monitor_size = monitor.size().to_logical::<i32>(scale_factor);
-        let win_size = LogicalSize::new(1280, 900);
+        let win_size = LogicalSize::new(1380, 960);
         main_window.set_size(win_size)?;
 
         let win_pos = LogicalPosition::new(

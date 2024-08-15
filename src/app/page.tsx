@@ -18,7 +18,7 @@ export default function Home() {
 
   return (
     <main className="flex flex-col gap-1 p-2 h-screen">
-      <div className="flex flex-col items-center pt-36 gap-6 h-screen">
+      <div className="flex flex-col items-center pt-48 gap-6 h-screen">
         <div className="flex flex-col gap-2 items-center justify-center">
           <img src="logo_128x128.png" alt="Logo Image" />
           <p className="font-bold text-2xl">Moo Tools</p>

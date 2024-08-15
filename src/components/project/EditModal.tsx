@@ -1,4 +1,4 @@
-import { VALID_URL_PATTERN } from "@/consts";
+import { JITO_BLOCK_ENGINE_URLS, VALID_URL_PATTERN } from "@/consts";
 import { ProjectResp, UpdateProjectReq, useUpdateProjectCmd } from "@/hooks";
 import {
   Button,
@@ -7,6 +7,8 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -41,6 +43,7 @@ export default function EditProjectModal({
   } = useForm<UpdateProjectReq>({
     defaultValues: {
       rpc_url: project.rpc,
+      jito_url: project.jito_url,
       proxy_urls: project.proxy_urls,
       agg_api_url: project.agg_api_url,
       agg_api_key: project.agg_api_key,
@@ -110,6 +113,22 @@ export default function EditProjectModal({
                       })}
                     />
                   </FormItem>
+                  {project.chain === "Solana" && (
+                    <FormItem
+                      label={<div className={labelClassName}>Jito Api Url</div>}
+                      error={errors.jito_url}
+                    >
+                      <Select
+                        aria-label="Jito Api Url"
+                        {...register("jito_url")}
+                      >
+                        {JITO_BLOCK_ENGINE_URLS.map((item) => (
+                          <SelectItem key={item.value}>{item.name}</SelectItem>
+                        ))}
+                      </Select>
+                    </FormItem>
+                  )}
+
                   <FormItem
                     label={
                       <div className={labelClassName}>{aggApiUrlLabel}</div>

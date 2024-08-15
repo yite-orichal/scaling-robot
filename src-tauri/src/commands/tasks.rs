@@ -15,6 +15,7 @@ pub struct CreateTaskReq {
     pub trade_mode: TradeMode,
     pub percetage: (u32, u32),
     pub slippage: u16,
+    pub use_jito: bool,
     pub gas_price: u32,
     pub interval_secs: u64,
 }
