@@ -65,6 +65,7 @@ impl JitoRpcClient {
         Ok(result)
     }
 
+    #[allow(unused)]
     pub async fn get_tip_accounts(&self) -> Result<Vec<String>, AppError> {
         let req_body = json!({
             "jsonrpc": "2.0",
