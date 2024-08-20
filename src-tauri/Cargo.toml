@@ -15,10 +15,10 @@ name = "app_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "2.0.0-rc.2", features = [] }
+tauri-build = { version = "2.0.0-rc.4", features = [] }
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
-tauri-plugin-updater = "2.0.0-rc.0"
+tauri-plugin-updater = "2.0.0-rc.1"
 
 [dependencies]
 anyhow = "1.0"
@@ -55,18 +55,18 @@ solana-program = "2.0.5"
 spl-token = { version = "6.0", features = ["no-entrypoint"] }
 spl-associated-token-account = { version = "4.0", features = ["no-entrypoint"] }
 mpl-token-metadata = "4.1"
-tauri = { version = "2.0.0-rc.2", features = ["rustls-tls", "tray-icon"] }
+tauri = { version = "2.0.0-rc.4", features = ["rustls-tls", "tray-icon"] }
 tauri-plugin-clipboard-manager = "2.1.0-beta.7"
-tauri-plugin-dialog = "2.0.0-rc.0"
+tauri-plugin-dialog = "2.0.0-rc.2"
 tauri-plugin-fs = "2.0.0-rc.0"
-tauri-plugin-log = { version = "2.0.0-rc.0", features = ["colored"] }
+tauri-plugin-log = { version = "2.0.0-rc.1", features = ["colored"] }
 tauri-plugin-os = "2.0.0-rc.0"
-tauri-plugin-shell = "2.0.0-rc.0"
+tauri-plugin-process = "2.0.0-rc.0"
+tauri-plugin-shell = "2.0.0-rc.2"
 thiserror = "1.0"
 tokio = { version = "1.39", features = ["full"] }
 alloy = { version = "0.2", features = ["full"] }
 alloy-chains = "0.1"
-tauri-plugin-process = "2.0.0-rc.0"
 
 
 # [patch.crates-io.aes-gcm-siv]
