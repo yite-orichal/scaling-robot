@@ -109,7 +109,8 @@ export default function CreateTaskPanel({
     searchParams.set("tradeMode", data.trade_mode);
     searchParams.set("tokenSymbol", data.token.symbol);
 
-    let wv = webview.getAllWebviewWindows().find((wv) => wv.label === label);
+    let allWebviewWindows = await webview.getAllWebviewWindows();
+    let wv = allWebviewWindows.find((wv) => wv.label === label);
     if (wv) {
       wv.show();
     } else {

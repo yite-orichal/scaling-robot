@@ -119,6 +119,12 @@ export default function WalletGroupPanel({
     refreshBalances();
   }, [refreshBalances]);
 
+  useEffect(() => {
+    if (!isRunning) {
+      refreshBalances(true);
+    }
+  }, [isRunning, refreshBalances]);
+
   return (
     <>
       <Card

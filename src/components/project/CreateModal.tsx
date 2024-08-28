@@ -111,6 +111,7 @@ export default function CreateProjectModal({
                     <Select aria-label="Chain" {...register("chain")}>
                       <SelectItem key="Solana">Solana</SelectItem>
                       <SelectItem key="Base">Base</SelectItem>
+                      <SelectItem key="Bsc">Bsc</SelectItem>
                     </Select>
                   </FormItem>
                   <FormItem
@@ -168,7 +169,7 @@ export default function CreateProjectModal({
                       })}
                     />
                   </FormItem>
-                  {selectedChain === "Base" && (
+                  {["Base", "Bsc"].indexOf(selectedChain) >= 0 && (
                     <FormItem
                       label={
                         <div className={labelClassName}>1inch Api Key</div>

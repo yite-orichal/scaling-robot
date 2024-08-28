@@ -31,7 +31,7 @@ use tauri::{AppHandle, Manager};
 
 use crate::{
     chain::{Chain, SolRpcClientExt},
-    consts::{BASE_ONE_INCH_V6_ROUTER_ADDR, ONE_INCH_ETH_ADDR, WSOL_MINT},
+    consts::{ONE_INCH_NATIVE_COIN_ADDR, WSOL_MINT},
     contracts::Erc20Contract,
     error::AppError,
     jito::JitoRpcClient,
@@ -133,7 +133,7 @@ impl Worker {
         // NOTE: take and return must success, so don't consume Result here
         let execute_result = match self.chain {
             Chain::Solana => self.sol_execute(&selected_key).await,
-            Chain::Base => self.evm_execute(&selected_key).await,
+            Chain::Base | Chain::Bsc => self.evm_execute(&selected_key).await,
         };
 
         if execute_result.is_ok() {
@@ -348,6 +348,7 @@ impl Worker {
     }
 
     async fn evm_execute(&self, selected_key: &[u8]) -> Result<(), AppError> {
+        let chain_config = self.chain.evm_chain_config().unwrap();
         let rpc_client = self.app_handle.read_evm_rpc_client().await?;
         let wallet_signer = PrivateKeySigner::from_slice(selected_key)?;
         let wallet_address = wallet_signer.address();
@@ -372,14 +373,17 @@ impl Worker {
             TradeDirection::Buy => {
                 let amount = balance_wei * U256::from(percentage) / U256::from(100);
                 let amount_ui = format_ether(amount);
-                let msg = format!("use {} ETH to buy {}", amount_ui, self.token.symbol);
-                (amount, ONE_INCH_ETH_ADDR, token_address, msg)
+                let msg = format!(
+                    "use {} {} to buy {}",
+                    amount_ui, chain_config.native_symbol, self.token.symbol
+                );
+                (amount, ONE_INCH_NATIVE_COIN_ADDR, token_address, msg)
             }
             TradeDirection::Sell => {
                 let amount = wallet_token_bal * U256::from(percentage) / U256::from(100);
                 let amount_ui = format_units(amount, self.token.decimals)?;
                 let msg = format!("to sell {} {}", amount_ui, self.token.symbol);
-                (amount, token_address, ONE_INCH_ETH_ADDR, msg)
+                (amount, token_address, ONE_INCH_NATIVE_COIN_ADDR, msg)
             }
         };
 
@@ -393,7 +397,7 @@ impl Worker {
 
         if input_token_addr == token_address {
             let allowance = token_contract
-                .allowance(wallet_address, BASE_ONE_INCH_V6_ROUTER_ADDR)
+                .allowance(wallet_address, chain_config.one_inch_router_addr)
                 .call()
                 .await?
                 ._0;
@@ -403,7 +407,7 @@ impl Worker {
                 self.send_worker_msg_to_win(msg_kind, evt_msg);
 
                 let receipt = token_contract
-                    .approve(BASE_ONE_INCH_V6_ROUTER_ADDR, U256::MAX)
+                    .approve(chain_config.one_inch_router_addr, U256::MAX)
                     .send()
                     .await?
                     .get_receipt()
@@ -436,11 +440,12 @@ impl Worker {
         };
 
         let api_key = self.agg_api_key.clone().unwrap_or_default();
+        let chain_id: u64 = chain_config.named_chain.into();
         let resp = one_inch::get_swap_data(
             &proxied_http_client,
             &self.agg_api_url,
             &api_key,
-            alloy_chains::NamedChain::Base.into(),
+            chain_id,
             swap_query_params,
         )
         .await?;
@@ -450,8 +455,9 @@ impl Worker {
         let balance_eth = format_ether(balance_wei);
         let total_need_eth = format_ether(total_need);
         if balance_wei < total_need {
+            let native_symbol = chain_config.native_symbol;
             return Err(AppError::new(format!(
-                "wallet {wallet_address} balance too low {balance_eth} ETH, need: {total_need_eth} ETH"
+                "wallet {wallet_address} balance too low {balance_eth} {native_symbol}, need: {total_need_eth} {native_symbol}"
             )));
         }
 

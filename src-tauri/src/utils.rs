@@ -53,7 +53,7 @@ pub fn pk_to_addr(chain: Chain, pk: &PrivateKey) -> Result<String, AppError> {
             let k = Keypair::from_bytes(pk)?;
             k.pubkey().to_string()
         }
-        Chain::Base => {
+        Chain::Base | Chain::Bsc => {
             let k = PrivateKeySigner::from_slice(pk)?;
             let pubkey = k.address();
             alloy::hex::encode_prefixed(pubkey)
@@ -69,7 +69,7 @@ pub fn pk_to_string(chain: Chain, pk: &PrivateKey) -> Result<String, AppError> {
             let k = Keypair::from_bytes(pk)?;
             k.to_base58_string()
         }
-        Chain::Base => {
+        Chain::Base | Chain::Bsc => {
             let k = PrivateKeySigner::from_slice(pk)?;
             alloy::hex::encode_prefixed(k.to_bytes())
         }
@@ -81,6 +81,6 @@ pub fn pk_to_string(chain: Chain, pk: &PrivateKey) -> Result<String, AppError> {
 pub fn create_pk(chain: Chain) -> PrivateKey {
     match chain {
         Chain::Solana => Keypair::new().to_bytes().to_vec(),
-        Chain::Base => PrivateKeySigner::random().to_bytes().to_vec(),
+        Chain::Base | Chain::Bsc => PrivateKeySigner::random().to_bytes().to_vec(),
     }
 }

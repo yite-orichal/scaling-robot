@@ -16,7 +16,25 @@ import { useTransferNativeCmd } from "@/hooks/chain";
 import { useProject } from "./Provider";
 import * as shell from "@tauri-apps/plugin-shell";
 import { abbr } from "@/app/utils";
-import { BASE_TX_FAKE_BASE_FEE, SOL_TX_BASE_FEE } from "@/consts";
+import {
+  BASE_TX_FAKE_BASE_FEE,
+  BSC_TX_FAKE_BASE_FEE,
+  SOL_TX_BASE_FEE,
+} from "@/consts";
+import { Chain } from "@/hooks";
+
+function get_tx_base_fee(chain: Chain): number {
+  if (chain === "Solana") {
+    return SOL_TX_BASE_FEE;
+  }
+  if (chain === "Base") {
+    return BASE_TX_FAKE_BASE_FEE;
+  }
+  if (chain === "Bsc") {
+    return BSC_TX_FAKE_BASE_FEE;
+  }
+  return 0;
+}
 
 type FormData = { to_addr: string; amount: string };
 export default function MainWalletWithdrawModal({
@@ -118,10 +136,7 @@ export default function MainWalletWithdrawModal({
                                   className="px-2 min-w-8 h-6"
                                   onClick={() => {
                                     const amount =
-                                      balance -
-                                      (project.chain === "Solana"
-                                        ? SOL_TX_BASE_FEE
-                                        : BASE_TX_FAKE_BASE_FEE);
+                                      balance - get_tx_base_fee(project.chain);
 
                                     field.onChange(amount.toString());
                                   }}

@@ -1,5 +1,6 @@
 use std::time::{Duration, Instant};
 
+use alloy::primitives::Address;
 use async_trait::async_trait;
 
 use log::debug;
@@ -16,13 +17,50 @@ use solana_sdk::{
 };
 use strum::Display;
 
-use crate::error::AppError;
+use crate::{
+    consts::{
+        BASE_MOO_TOKEN_HUB_ADDR, BASE_ONE_INCH_V6_ROUTER_ADDR, BASE_WETH_ADDR,
+        BSC_MOO_TOKEN_HUB_ADDR, BSC_ONE_INCH_V6_ROUTER_ADDR, BSC_WBNB_ADDR,
+    },
+    error::AppError,
+};
+
+pub struct EvmChainConfig {
+    pub named_chain: alloy_chains::NamedChain,
+    pub moo_hub_addr: Address,
+    pub native_symbol: &'static str,
+    pub wrapped_native_addr: Address,
+    pub one_inch_router_addr: Address,
+}
 
 #[derive(Debug, Display, Copy, Clone, Serialize, Deserialize, Default)]
 pub enum Chain {
     #[default]
     Solana,
     Base,
+    Bsc,
+}
+
+impl Chain {
+    pub fn evm_chain_config(&self) -> Option<EvmChainConfig> {
+        match self {
+            Chain::Solana => None,
+            Chain::Base => Some(EvmChainConfig {
+                named_chain: alloy_chains::NamedChain::Base,
+                moo_hub_addr: BASE_MOO_TOKEN_HUB_ADDR,
+                native_symbol: "ETH",
+                wrapped_native_addr: BASE_WETH_ADDR,
+                one_inch_router_addr: BASE_ONE_INCH_V6_ROUTER_ADDR,
+            }),
+            Chain::Bsc => Some(EvmChainConfig {
+                named_chain: alloy_chains::NamedChain::BinanceSmartChain,
+                moo_hub_addr: BSC_MOO_TOKEN_HUB_ADDR,
+                native_symbol: "BNB",
+                wrapped_native_addr: BSC_WBNB_ADDR,
+                one_inch_router_addr: BSC_ONE_INCH_V6_ROUTER_ADDR,
+            }),
+        }
+    }
 }
 
 #[async_trait]

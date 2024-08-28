@@ -48,6 +48,9 @@ export default function ProjectProvider({
     if (_project.chain === "Solana") {
       return "SOL";
     }
+    if (_project.chain === "Bsc") {
+      return "BNB";
+    }
 
     return "ETH";
   }, [_project]);
@@ -55,6 +58,9 @@ export default function ProjectProvider({
   const explorerBaseUrl = useMemo(() => {
     if (_project.chain === "Solana") {
       return "https://solscan.io";
+    }
+    if (_project.chain === "Bsc") {
+      return "https://bscscan.com";
     }
 
     return "https://basescan.org";

@@ -46,7 +46,7 @@ impl From<CreateProjectReq> for Project {
     fn from(value: CreateProjectReq) -> Self {
         let main_wallet = match value.chain {
             Chain::Solana => SolKeypair::new().to_bytes().to_vec(),
-            Chain::Base => EvmKeyPair::random().to_bytes().to_vec(),
+            Chain::Base | Chain::Bsc => EvmKeyPair::random().to_bytes().to_vec(),
         };
 
         Self {

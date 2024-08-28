@@ -43,7 +43,7 @@ impl WalletGrp {
                     let keypair = utils::parse_sol_bs58_pk(&pk)?;
                     pks.insert(keypair.to_bytes().to_vec());
                 }
-                Chain::Base => {
+                Chain::Base | Chain::Bsc => {
                     let key = PrivateKeySigner::from_str(&pk)?;
                     pks.insert(key.to_bytes().to_vec());
                 }

@@ -21,7 +21,7 @@ use tauri::{command, AppHandle};
 
 use crate::{
     chain::{Chain, SolRpcClientExt},
-    consts::{BASE_MOO_TOKEN_HUB_ADDR, SOL_TX_BASE_FEE},
+    consts::SOL_TX_BASE_FEE,
     contracts::MooTokenHubContract,
     error::AppError,
     state::AppHandleStateExt,
@@ -71,7 +71,7 @@ pub async fn get_addr_balance(
                 bal_ui,
             }
         }
-        Chain::Base => {
+        Chain::Base | Chain::Bsc => {
             let provider = app_handle.read_evm_provider().await?;
             let address = Address::from_str(&addr)?;
             let bal = provider.get_balance(address).await?;
@@ -98,7 +98,7 @@ pub async fn get_token_info(
             let client = app_handle.read_sol_rpc_client().await?;
             TokenInfo::load_sol_token_info(addr.as_str(), &client).await?
         }
-        Chain::Base => {
+        Chain::Base | Chain::Bsc => {
             let client = app_handle.read_evm_provider().await?;
             TokenInfo::load_evm_token_info(chain, addr.as_str(), &client).await?
         }
@@ -132,7 +132,7 @@ pub async fn airdrop(req: AirdropReq, app_handle: AppHandle) -> Result<String, A
                 .await?;
             sign.to_string()
         }
-        Chain::Base => {
+        Chain::Base | Chain::Bsc => {
             let pk_bytes = alloy::hex::decode(&from_pk)?;
             let wallet_signer = PrivateKeySigner::from_slice(&pk_bytes)?;
             let wallet_address = wallet_signer.address();
@@ -158,8 +158,10 @@ pub async fn airdrop(req: AirdropReq, app_handle: AppHandle) -> Result<String, A
                 return Err(AppError::new("insufficient balance"));
             }
 
-            let token_hub_contract =
-                MooTokenHubContract::new(BASE_MOO_TOKEN_HUB_ADDR, rpc_provider.clone());
+            let chain_config = chain.evm_chain_config().unwrap();
+            let token_hub_addr = chain_config.moo_hub_addr;
+
+            let token_hub_contract = MooTokenHubContract::new(token_hub_addr, rpc_provider.clone());
             let receipt = token_hub_contract
                 .deposit(addresses, per_amount, per_w_amount)
                 .value(value)
@@ -207,7 +209,7 @@ pub async fn transfer_native(
                 .await?;
             sign.to_string()
         }
-        Chain::Base => {
+        Chain::Base | Chain::Bsc => {
             let pk_bytes = alloy::hex::decode(&req.from_pk)?;
             let wallet_signer = PrivateKeySigner::from_slice(&pk_bytes)?;
             let wallet_addr = wallet_signer.address();

@@ -12,6 +12,7 @@
     "core:window:allow-close",
     "core:webview:default",
     "core:webview:allow-create-webview-window",
+    "core:webview:allow-get-all-webviews",
     "core:app:default",
     "core:resources:default",
     "core:image:default",
@@ -38,4 +39,3 @@
     "process:default"
   ]
 }
-

@@ -1,6 +1,6 @@
 import { useCmd } from ".";
 
-export type Chain = "Solana" | "Base";
+export type Chain = "Solana" | "Base" | "Bsc";
 
 export type CreateProjectReq = {
   id: string;

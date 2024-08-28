@@ -2,7 +2,7 @@ use std::{collections::HashSet, str::FromStr};
 
 use crate::{
     chain::{Chain, SolRpcClientExt},
-    consts::{BASE_WETH_ADDR, SOL_TX_BASE_FEE},
+    consts::SOL_TX_BASE_FEE,
     contracts::WEthContract,
     error::AppError,
     state::{AppHandleStateExt, ProjectState},
@@ -184,7 +184,7 @@ pub async fn wallet_grp_withdraw(
                 .await?;
             sign.to_string()
         }
-        Chain::Base => {
+        Chain::Base | Chain::Bsc => {
             let pk_bytes = alloy::hex::decode(&req.from_pk)?;
             let wallet_signer = PrivateKeySigner::from_slice(&pk_bytes)?;
             let wallet_addr = wallet_signer.address();
@@ -196,7 +196,10 @@ pub async fn wallet_grp_withdraw(
                 .with_recommended_fillers()
                 .wallet(EthereumWallet::from(wallet_signer))
                 .on_client(rpc_client);
-            let weth_contract = WEthContract::new(BASE_WETH_ADDR, rpc_provider.clone());
+
+            let chain_config = req.chain.evm_chain_config().unwrap();
+            let wrapped_native_addr = chain_config.wrapped_native_addr;
+            let weth_contract = WEthContract::new(wrapped_native_addr, rpc_provider.clone());
             let weth_balance = weth_contract.balanceOf(wallet_addr).call().await?._0;
             if weth_balance > U256::ZERO {
                 let withdraw_receipt = weth_contract
@@ -216,11 +219,16 @@ pub async fn wallet_grp_withdraw(
             // higher price
             gas_price += 100_000;
             let gas_limit = 21000u128;
-            let l1_gas = 1600u128;
-            // OPTIM: use l1 rpc to get gas price
-            // suppose 1gwei for now
-            let l1_gas_price = 1_000_000_000u128;
-            let l1_fee_need = l1_gas * l1_gas_price;
+            let l1_fee_need = match req.chain {
+                Chain::Base => {
+                    let l1_gas = 1600u128;
+                    // OPTIM: use l1 rpc to get gas price
+                    // suppose 1gwei for now
+                    let l1_gas_price = 1_000_000_000u128;
+                    l1_gas * l1_gas_price
+                }
+                _ => 0,
+            };
 
             let total_fee_needed = U256::from((gas_price * gas_limit) + l1_fee_need);
             if total_fee_needed > balance {

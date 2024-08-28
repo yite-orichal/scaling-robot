@@ -129,7 +129,7 @@ pub async fn open_project(path: String, app_handle: AppHandle) -> Result<Project
             *guard = Some(Arc::new(client));
             drop(guard)
         }
-        Chain::Base => {
+        Chain::Base | Chain::Bsc => {
             let client_state = app_handle.state::<EvmRpcClientState>();
             let provider_state = app_handle.state::<EvmProviderState>();
 
@@ -237,7 +237,7 @@ pub async fn update_project(
         let chain = proj.project.chain;
         let main_wallet = match chain {
             Chain::Solana => bs58::decode(&req.main_wallet_pk).into_vec()?,
-            Chain::Base => PrivateKeySigner::from_str(&req.main_wallet_pk)?
+            Chain::Base | Chain::Bsc => PrivateKeySigner::from_str(&req.main_wallet_pk)?
                 .to_bytes()
                 .to_vec(),
         };
