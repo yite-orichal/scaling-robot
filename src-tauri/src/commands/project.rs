@@ -4,7 +4,6 @@ use alloy::{
     providers::ProviderBuilder, rpc::client::ClientBuilder, signers::local::PrivateKeySigner,
     transports::http::Http,
 };
-use alloy_chains::NamedChain;
 use serde::{Deserialize, Serialize};
 use solana_client::{nonblocking::rpc_client::RpcClient, rpc_client::RpcClientConfig};
 use solana_rpc_client::http_sender::HttpSender;
@@ -132,6 +131,7 @@ pub async fn open_project(path: String, app_handle: AppHandle) -> Result<Project
         Chain::Base | Chain::Bsc => {
             let client_state = app_handle.state::<EvmRpcClientState>();
             let provider_state = app_handle.state::<EvmProviderState>();
+            let chain_config = proj.chain.evm_chain_config().unwrap();
 
             let http_client = reqwest::ClientBuilder::new()
                 .proxy(reqwest::Proxy::all(rpc_proxy_url)?)
@@ -146,7 +146,7 @@ pub async fn open_project(path: String, app_handle: AppHandle) -> Result<Project
             drop(guard);
 
             let provider = ProviderBuilder::new()
-                .with_chain(NamedChain::Base)
+                .with_chain(chain_config.named_chain)
                 .on_client(client);
 
             let mut guard = provider_state.write().await;

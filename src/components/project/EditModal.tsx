@@ -150,7 +150,7 @@ export default function EditProjectModal({
                       })}
                     />
                   </FormItem>
-                  {project.chain === "Base" && (
+                  {["Base", "Bsc"].indexOf(project.chain) >= 0 && (
                     <FormItem
                       label={
                         <div className={labelClassName}>1inch Api Key</div>
