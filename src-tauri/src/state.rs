@@ -80,6 +80,7 @@ impl AppHandleStateExt for AppHandle {
         let rpc_state = self.state::<EvmProviderState>();
         let guard = rpc_state.read().await;
         if guard.is_none() {
+            println!("no evm rpc client found");
             return Err(AppError::new("no evm rpc client found"));
         }
         let rpc_client = guard.clone().unwrap();

@@ -86,7 +86,7 @@ export default function ProjectPanel({
             <div className="col-span-2">
               {(() => {
                 const url = new URL(project.rpc);
-                return `Rpc Url: ${url.protocol}//${url.host}`;
+                return `Rpc Url: ${url}`;
               })()}
             </div>
             <div className="flex items-center gap-1">

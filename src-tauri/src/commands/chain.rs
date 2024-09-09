@@ -72,10 +72,36 @@ pub async fn get_addr_balance(
             }
         }
         Chain::Base | Chain::Bsc => {
-            let provider = app_handle.read_evm_provider().await?;
-            let address = Address::from_str(&addr)?;
-            let bal = provider.get_balance(address).await?;
+            println!("Attempting to read EVM provider");
+            let provider = match app_handle.read_evm_provider().await {
+                Ok(p) => p,
+                Err(e) => {
+                    println!("Error reading EVM provider: {:?}", e);
+                    return Err(e.into());
+                }
+            };
+        
+            println!("Parsing address: {}", addr);
+            let address = match Address::from_str(&addr) {
+                Ok(a) => a,
+                Err(e) => {
+                    println!("Error parsing address: {:?}", e);
+                    return Err(e.into());
+                }
+            };
+        
+            println!("Getting balance for address: {}", address);
+            let bal = match provider.get_balance(address).await {
+                Ok(b) => b,
+                Err(e) => {
+                    println!("Error getting balance: {:?}", e);
+                    return Err(e.into());
+                }
+            };
+        
+            println!("Formatting balance");
             let bal_ui = format_ether(bal);
+        
             AddrBalanceResp {
                 addr,
                 bal: bal.to_string(),

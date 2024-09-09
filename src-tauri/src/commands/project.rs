@@ -117,6 +117,7 @@ pub async fn open_project(path: String, app_handle: AppHandle) -> Result<Project
             let http_client = reqwest_11::Client::builder()
                 .proxy(reqwest_11::Proxy::all(rpc_proxy_url)?)
                 .timeout(Duration::from_secs(10))
+                .danger_accept_invalid_certs(true) 
                 .build()?;
             let http_sender = HttpSender::new_with_client(proj.rpc.clone(), http_client);
             let client = RpcClient::new_sender(
@@ -135,7 +136,8 @@ pub async fn open_project(path: String, app_handle: AppHandle) -> Result<Project
 
             let http_client = reqwest::ClientBuilder::new()
                 .proxy(reqwest::Proxy::all(rpc_proxy_url)?)
-                .timeout(Duration::from_secs(10))
+                .timeout(Duration::from_secs(60))
+                .danger_accept_invalid_certs(true) 
                 .build()?;
             let rpc_url = proj.rpc.parse()?;
             let transport: Http<reqwest::Client> = Http::with_client(http_client, rpc_url);
