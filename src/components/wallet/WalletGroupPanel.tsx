@@ -69,7 +69,7 @@ export default function WalletGroupPanel({
     async (force: boolean = false) => {
       setIsGettingBal(true);
       try {
-        const addrChunks = _.chunk(walletGrp.addresses, 50);
+        const addrChunks = _.chunk(walletGrp.addresses, 30);
         for (const chunk of addrChunks) {
           const promises = chunk.map(([addr, _]) => {
             const cached = addrBalances[addr];
@@ -87,8 +87,9 @@ export default function WalletGroupPanel({
           });
           await sleep(200);
         }
-      } catch {
-        // catched by cmd
+      } catch (err) {
+        const err_msg = (err as any).err_msg || `${err}`;
+        toast.error(`refresh address balance error: ${err_msg}`);
       } finally {
         setIsGettingBal(false);
       }
@@ -117,12 +118,12 @@ export default function WalletGroupPanel({
 
   useEffect(() => {
     refreshBalances();
-  }, [refreshBalances]);
-
-  useEffect(() => {
-    if (!isRunning) {
-      refreshBalances(true);
-    }
+    return () => {
+      // if from isRunning exit, refresh balance
+      if (isRunning) {
+        refreshBalances(true);
+      }
+    };
   }, [isRunning, refreshBalances]);
 
   return (

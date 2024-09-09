@@ -15,10 +15,10 @@ name = "app_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "2.0.0-rc.6", features = [] }
+tauri-build = { version = "2.0.0-rc.9", features = [] }
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
-tauri-plugin-updater = "2.0.0-rc.1"
+tauri-plugin-updater = "2.0.0-rc.3"
 
 [dependencies]
 anyhow = "1.0"
@@ -48,24 +48,24 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_qs = "0.13"
 serde_with = "3.9"
-solana-sdk = "2.0.7"
-solana-client = "2.0.7"
-solana-rpc-client = "2.0.7"
-solana-program = "2.0.7"
+solana-sdk = "2.0.9"
+solana-client = "2.0.9"
+solana-rpc-client = "2.0.9"
+solana-program = "2.0.9"
 spl-token = { version = "6.0", features = ["no-entrypoint"] }
-spl-associated-token-account = { version = "4.0", features = ["no-entrypoint"] }
+spl-associated-token-account = { version = "5.0", features = ["no-entrypoint"] }
 mpl-token-metadata = "4.1"
-tauri = { version = "2.0.0-rc.6", features = ["rustls-tls", "tray-icon"] }
+tauri = { version = "2.0.0-rc.10", features = ["rustls-tls", "tray-icon"] }
 tauri-plugin-clipboard-manager = "2.1.0-beta.7"
-tauri-plugin-dialog = "2.0.0-rc.2"
-tauri-plugin-fs = "2.0.0-rc.0"
-tauri-plugin-log = { version = "2.0.0-rc.1", features = ["colored"] }
-tauri-plugin-os = "2.0.0-rc.0"
-tauri-plugin-process = "2.0.0-rc.0"
-tauri-plugin-shell = "2.0.0-rc.2"
+tauri-plugin-dialog = "2.0.0-rc.5"
+tauri-plugin-fs = "2.0.0-rc.3"
+tauri-plugin-log = { version = "2.0.0-rc.2", features = ["colored"] }
+tauri-plugin-os = "2.0.0-rc.1"
+tauri-plugin-process = "2.0.0-rc.1"
+tauri-plugin-shell = "2.0.0-rc.3"
 thiserror = "1.0"
-tokio = { version = "1.39", features = ["full"] }
-alloy = { version = "0.2", features = ["full"] }
+tokio = { version = "1.40", features = ["full"] }
+alloy = { version = "0.3", features = ["full"] }
 alloy-chains = "0.1"
 
 

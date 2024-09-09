@@ -12,15 +12,15 @@ export default function ProxyEditor({
 }) {
   const [textContent, setTextContent] = useState(value.join("\n"));
   const selectFile = async () => {
-    const resp = await dialog.open({
+    const path = await dialog.open({
       title: "Select Proxy File",
       directory: false,
       multiple: false,
       recursive: false,
       filters: [{ name: "txt", extensions: ["txt"] }],
     });
-    if (resp?.path) {
-      const fileLines = await fs.readTextFile(resp.path);
+    if (path) {
+      const fileLines = await fs.readTextFile(path);
       const lines = fileLines
         .split("\n")
         .map((it) => it.trim())

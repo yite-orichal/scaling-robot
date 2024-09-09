@@ -11,16 +11,16 @@ export default function FileSelector({
 }) {
   const [filePath, setFilePath] = useState<string>("");
   const selectPath = async () => {
-    const resp = await dialog.open({
+    const path = await dialog.open({
       title: "Select Proxy File",
       directory: false,
       multiple: false,
       recursive: false,
       filters: [{ name: "txt", extensions: ["txt"] }],
     });
-    if (resp?.path) {
-      setFilePath(resp.path);
-      onChange(resp.path);
+    if (path) {
+      setFilePath(path);
+      onChange(path);
     }
   };
   return (

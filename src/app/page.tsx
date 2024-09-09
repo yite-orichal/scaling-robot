@@ -36,7 +36,7 @@ export default function Home() {
                   filters: [{ name: "Project Files", extensions: ["maproj"] }],
                 });
                 if (filePath) {
-                  router.replace(`/project?path=${filePath.path}`);
+                  router.replace(`/project?path=${filePath}`);
                 }
               }}
             >
