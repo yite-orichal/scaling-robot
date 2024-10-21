@@ -61,6 +61,18 @@ export default function CreateTaskPanel({
     },
   });
 
+  // Watch for slippage and interval_secs changes
+  const workerCnt = watch("workers_cnt")
+  const intervalSecs = watch("interval_secs");
+
+  // Calculate the gas estimation
+  const gasEstimation = useMemo(() => {
+    if (workerCnt && intervalSecs) {
+      return 0.000125 * workerCnt / intervalSecs * 86400;
+    }
+    return 0;
+  }, [workerCnt, intervalSecs]);
+
   const isUseJito = watch("use_jito");
 
   const [gasPriceLabel, gasPriceUnit] = useMemo(() => {
@@ -382,6 +394,13 @@ export default function CreateTaskPanel({
           {createTradeTaskErr && (
             <div className="text-danger">{createTradeTaskErr.err_msg} </div>
           )}
+          {/* New Gas Estimation Element */}
+          <div className="text-sm text-gray-500 text-success pl-[9rem]">
+            Gas Estimation: {gasEstimation.toFixed(6)}
+          </div>
+
+          {/* Start Task Button */}
+
           <Button
             isDisabled={!isValid}
             isLoading={creating}
