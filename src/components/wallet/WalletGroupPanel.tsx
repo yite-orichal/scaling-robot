@@ -75,21 +75,22 @@ export default function WalletGroupPanel({
   }
   // const data={
   //   "0":{
-  //     bal:"10",
+  //     bal:"1",
   //     bal_ui:"11",
   //     addr:"0x1111111111111111111111111111111111111111"
   //   },
   //   "1":{
-  //     bal:"20",
+  //     bal:"2",
   //     bal_ui:"11",
   //      addr:"0x1111111111111111111111111111111111111111"
   //   },
   //   "2":{
-  //     bal:"30",
+  //     bal:"3",
   //     bal_ui:"11",
   //      addr:"0x1111111111111111111111111111111111111111"
   //   }
   // }
+  // setAverageWalletBalance(onGetAvageWalletGrpBalance(data));
   const refreshBalances = useCallback(
     async (force: boolean = false) => {
       setIsGettingBal(true);

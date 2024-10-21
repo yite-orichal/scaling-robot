@@ -413,13 +413,13 @@ export default function CreateTaskPanel({
           {createTradeTaskErr && (
             <div className="text-danger">{createTradeTaskErr.err_msg} </div>
           )}
-          <div className="flex justify-between items-center">
+          <div className="flex  flex-col">
             {/* New Gas Estimation Element */}
-            <div className="text-sm text-gray-500 text-success pl-[9rem]">
+            <div className="text-sm text-gray-500 mt-2 text-success pl-[9rem] whitespace-nowrap">
               Gas Estimation: {gasEstimation.toFixed(6)}
             </div>
             {/* New Volume Estimation Element */}
-            <div className="text-sm text-gray-500 text-success pl-[9rem]">
+            <div className="text-sm text-gray-500 mt-2 text-success pl-[9rem] whitespace-nowrap">
               Volume Estimation: {volumeEstimation.toFixed(6)}
             </div>
           </div>
