@@ -13,11 +13,12 @@ import { AiOutlineDelete, AiOutlineExport } from "react-icons/ai";
 import { MdOutlineMerge, MdRefresh } from "react-icons/md";
 import { TbArrowFork } from "react-icons/tb";
 import IconButton from "../IconButton";
-import { useProject } from "../project/Provider";
 import AirdropModal from "./AirdropModal";
 import BatchWithDrawModal from "./BatchWithdrawModal";
 import toast from "react-hot-toast";
 import { sleep } from "@/app/utils";
+import { useContent } from "../ContentProviders";
+import { useProject } from "../project/Provider";
 
 export default function WalletGroupPanel({
   isRunning = false,
@@ -32,6 +33,7 @@ export default function WalletGroupPanel({
   const [isBatchWithdrawModalOpen, setIsBatchWithdrawModalOpen] =
     useState(false);
   const { getAddrBalance } = useGetAddrBalanceCmd();
+  const {averageWalletBalance,setAverageWalletBalance}= useContent()
   const [isGettingBal, setIsGettingBal] = useState(false);
   const [addrBalances, setAddrBalances] = useState<
     Record<string, AddrBalanceResp>
@@ -64,7 +66,31 @@ export default function WalletGroupPanel({
       toast.error(`Export wallet group error: ${err.err_msg}`);
     }
   };
-
+  const onGetAvageWalletGrpBalance = (addrBalances:Record<string, AddrBalanceResp>) => {
+    const balances = Object.values(addrBalances);
+    if (balances.length === 0) return "0";
+  
+    const total = balances.reduce((sum, item) => sum + parseFloat(item.bal), 0);
+    return  (total / balances.length).toFixed(8).toString();
+  }
+  // const data={
+  //   "0":{
+  //     bal:"1",
+  //     bal_ui:"11",
+  //     addr:"0x1111111111111111111111111111111111111111"
+  //   },
+  //   "1":{
+  //     bal:"2",
+  //     bal_ui:"11",
+  //      addr:"0x1111111111111111111111111111111111111111"
+  //   },
+  //   "2":{
+  //     bal:"3",
+  //     bal_ui:"11",
+  //      addr:"0x1111111111111111111111111111111111111111"
+  //   }
+  // }
+  // setAverageWalletBalance(onGetAvageWalletGrpBalance(data));
   const refreshBalances = useCallback(
     async (force: boolean = false) => {
       setIsGettingBal(true);
@@ -78,13 +104,20 @@ export default function WalletGroupPanel({
               : Promise.resolve(cached);
           });
           const resps = await Promise.all(promises);
-          setAddrBalances((old) => {
-            const newResult = { ...old };
-            for (const resp of resps) {
-              newResult[resp.addr] = resp;
-            }
-            return newResult;
-          });
+          const newResult = { ...addrBalances };
+          for (const resp of resps) {
+            newResult[resp.addr] = resp;
+          }
+          // setAddrBalances((old) => {
+          //   const newResult = { ...old };
+          //   for (const resp of resps) {
+          //     newResult[resp.addr] = resp;
+          //   }
+          //   console.log("newResult",newResult)
+          //   return newResult;
+          // });
+          setAddrBalances(newResult);
+          setAverageWalletBalance(onGetAvageWalletGrpBalance(newResult||{})||"0");
           await sleep(200);
         }
       } catch (err) {

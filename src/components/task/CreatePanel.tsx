@@ -21,6 +21,7 @@ import { NumericFormat } from "react-number-format";
 import { useMemo } from "react";
 import { BsQuestionCircle } from "react-icons/bs";
 import { useProject } from "../project/Provider";
+import { useContent } from "../ContentProviders";
 
 export type TaskStatus = "Stopped" | "Running";
 export type Task = {
@@ -40,6 +41,7 @@ export default function CreateTaskPanel({
   onTaskRemoved: (id: string) => void;
 }) {
   const { project } = useProject();
+  const { averageWalletBalance } = useContent();
   const labelClassName = "w-32 text-right";
 
   const {
@@ -60,6 +62,35 @@ export default function CreateTaskPanel({
       workers_cnt: 2,
     },
   });
+
+  // Watch for slippage and interval_secs changes
+  const workerCnt = watch("workers_cnt");
+  const intervalSecs = watch("interval_secs");
+  const percetage = watch("percetage");
+  const timeframe = 86400;
+  const gasPerTrade = 0.000125;
+  // Calculate the gas estimation
+  const gasEstimation = useMemo(() => {
+    if (workerCnt && intervalSecs) {
+      return ((gasPerTrade * workerCnt) / intervalSecs) * timeframe;
+    }
+    return 0;
+  }, [workerCnt, intervalSecs]);
+
+  // Calculate the gas estimation
+  const volumeEstimation = useMemo(() => {
+    const avaragePercetage = (percetage[0] + percetage[1]) / 2;
+    if (workerCnt && intervalSecs && averageWalletBalance) {
+      return (
+        workerCnt *
+        intervalSecs *
+        timeframe *
+        avaragePercetage *
+        +averageWalletBalance
+      );
+    }
+    return 0;
+  }, [workerCnt, intervalSecs, averageWalletBalance, percetage]);
 
   const isUseJito = watch("use_jito");
 
@@ -84,7 +115,7 @@ export default function CreateTaskPanel({
     data.wallet_grp_id = walletGrp.id;
     data.percetage = data.percetage.map((x) => Math.round(x * 100)) as [
       number,
-      number,
+      number
     ];
     data.slippage =
       walletGrp.chain === "Solana"
@@ -382,6 +413,19 @@ export default function CreateTaskPanel({
           {createTradeTaskErr && (
             <div className="text-danger">{createTradeTaskErr.err_msg} </div>
           )}
+          <div className="flex  flex-col">
+            {/* New Gas Estimation Element */}
+            <div className="text-sm text-gray-500 mt-2 text-success pl-[9rem] whitespace-nowrap">
+              Gas Estimation: {gasEstimation.toFixed(6)}
+            </div>
+            {/* New Volume Estimation Element */}
+            <div className="text-sm text-gray-500 mt-2 text-success pl-[9rem] whitespace-nowrap">
+              Volume Estimation: {volumeEstimation.toFixed(6)}
+            </div>
+          </div>
+
+          {/* Start Task Button */}
+
           <Button
             isDisabled={!isValid}
             isLoading={creating}
