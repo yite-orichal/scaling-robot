@@ -13,7 +13,6 @@ import TextInput from "../TextInput";
 import { Controller, useForm } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
 import { useTransferNativeCmd } from "@/hooks/chain";
-import { useProject } from "./Provider";
 import * as shell from "@tauri-apps/plugin-shell";
 import { abbr } from "@/app/utils";
 import {
@@ -22,6 +21,7 @@ import {
   SOL_TX_BASE_FEE,
 } from "@/consts";
 import { Chain } from "@/hooks";
+import { useProject } from "./Provider";
 
 function get_tx_base_fee(chain: Chain): number {
   if (chain === "Solana") {

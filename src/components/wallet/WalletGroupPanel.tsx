@@ -90,7 +90,6 @@ export default function WalletGroupPanel({
   //      addr:"0x1111111111111111111111111111111111111111"
   //   }
   // }
-  // console.log(onGetAvageWalletGrpBalance(data),"onGetAvageWalletGrpBalance(data)")
   const refreshBalances = useCallback(
     async (force: boolean = false) => {
       setIsGettingBal(true);
@@ -117,7 +116,7 @@ export default function WalletGroupPanel({
           //   return newResult;
           // });
           setAddrBalances(newResult);
-          setAverageWalletBalance(onGetAvageWalletGrpBalance(newResult));
+          setAverageWalletBalance(onGetAvageWalletGrpBalance(newResult||{})||"0");
           await sleep(200);
         }
       } catch (err) {
