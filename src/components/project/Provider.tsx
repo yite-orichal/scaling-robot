@@ -1,7 +1,7 @@
 "use client";
 
 import { ProjectResp } from "@/hooks";
-import { useGetAddrBalanceCmd } from "@/hooks/chain";
+import { AddrBalanceResp, useGetAddrBalanceCmd } from "@/hooks/chain";
 import {
   createContext,
   Dispatch,
@@ -13,6 +13,7 @@ import {
   useState,
 } from "react";
 import toast from "react-hot-toast";
+import { ContentProvider } from "../ContentProviders";
 
 type ProjectContextType = {
   project: ProjectResp;
@@ -43,6 +44,7 @@ export default function ProjectProvider({
   project: ProjectResp;
 }) {
   const [_project, setProject] = useState(project);
+  const [averageWalletBalance,setAverageWalletBalance] = useState<string>("");
 
   const nativeCoinSymbol = useMemo(() => {
     if (_project.chain === "Solana") {
@@ -93,6 +95,7 @@ export default function ProjectProvider({
   }, [project]);
 
   return (
+    <ContentProvider value={{averageWalletBalance,setAverageWalletBalance}}>
     <ProjectContext.Provider
       value={{
         project: _project,
@@ -106,5 +109,7 @@ export default function ProjectProvider({
     >
       {children}
     </ProjectContext.Provider>
+    </ContentProvider>
+
   );
 }
